@@ -5,6 +5,7 @@ import os
 os.environ["TORCH_CUDNN_V8_API_DISABLED"]="1"
 import json
 import math
+import numpy as np
 import torch
 from torch import nn
 from torch.nn import functional as F
@@ -20,6 +21,7 @@ from text import text_to_sequence
 
 from scipy.io.wavfile import write
 
+import soundfile as sf
 
 @profile
 def get_text(text, hps):
@@ -54,6 +56,9 @@ def run_vits():
         x_tst = stn_tst.cuda().unsqueeze(0)
         x_tst_lengths = torch.LongTensor([stn_tst.size(0)]).cuda()
         audio = net_g.infer(x_tst, x_tst_lengths, noise_scale=.667, noise_scale_w=0.8, length_scale=1)[0][0,0].data.cpu().float().numpy()
+    sent_audio_path = f"test.wav"
+    silence_duration= 22050
+    sf.write(sent_audio_path, np.concatenate((audio, np.zeros(silence_duration))), 22050)
     #ipd.display(ipd.Audio(audio, rate=hps.data.sampling_rate, normalize=False))
 
 # %%
