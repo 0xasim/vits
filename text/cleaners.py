@@ -16,7 +16,6 @@ import re
 from unidecode import unidecode
 from phonemizer import phonemize
 
-
 # Regular expression matching whitespace:
 _whitespace_re = re.compile(r'\s+')
 
@@ -79,22 +78,27 @@ def transliteration_cleaners(text):
   text = collapse_whitespace(text)
   return text
 
+from phonemizer.backend import EspeakBackend
+backend = EspeakBackend(language='en-us', preserve_punctuation=True, with_stress=True)
 
 def english_cleaners(text):
   '''Pipeline for English text, including abbreviation expansion.'''
   text = convert_to_ascii(text)
   text = lowercase(text)
   text = expand_abbreviations(text)
-  phonemes = phonemize(text, language='en-us', backend='espeak', strip=True)
+  # phonemes = phonemize(text, language='en-us', backend='espeak', strip=True)
+  text = [line.strip() for line in text.split('\n') if line]
+  phonemes = ''.join(backend.phonemize(text))
   phonemes = collapse_whitespace(phonemes)
   return phonemes
-
 
 def english_cleaners2(text):
   '''Pipeline for English text, including abbreviation expansion. + punctuation + stress'''
   text = convert_to_ascii(text)
   text = lowercase(text)
   text = expand_abbreviations(text)
-  phonemes = phonemize(text, language='en-us', backend='espeak', strip=True, preserve_punctuation=True, with_stress=True)
+  # phonemes = phonemize(text, language='en-us', backend='espeak', strip=True, preserve_punctuation=True, with_stress=True)
+  text = [line.strip() for line in text.split('\n') if line]
+  phonemes = ''.join(backend.phonemize(text))
   phonemes = collapse_whitespace(phonemes)
   return phonemes

@@ -50,9 +50,9 @@ _ = utils.load_checkpoint("/home/latent/Downloads/pretrained_ljs.pth", net_g, No
 # %%
 @profile
 def run_vits():
-    # stn_tst = get_text("VITS is Awesome!", hps)
     with torch.no_grad():
-        stn_tst = torch.randint(0, 178, (30,))
+        stn_tst = get_text("VITS is Awesome!", hps)
+        # stn_tst = torch.randint(0, 178, (30,))
         x_tst = stn_tst.cuda().unsqueeze(0)
         x_tst_lengths = torch.LongTensor([stn_tst.size(0)]).cuda()
         audio = net_g.infer(x_tst, x_tst_lengths, noise_scale=.667, noise_scale_w=0.8, length_scale=1)[0][0,0].data.cpu().float().numpy()
