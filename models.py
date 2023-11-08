@@ -3,7 +3,7 @@ import math
 import torch
 from torch import nn
 from torch.nn import functional as F
-
+from memory_profiler import profile
 import commons
 import modules
 import attentions
@@ -496,6 +496,7 @@ class SynthesizerTrn(nn.Module):
     o = self.dec(z_slice, g=g)
     return o, l_length, attn, ids_slice, x_mask, y_mask, (z, z_p, m_p, logs_p, m_q, logs_q)
 
+  @profile
   def infer(self, x, x_lengths, sid=None, noise_scale=1, length_scale=1, noise_scale_w=1., max_len=None):
     x, m_p, logs_p, x_mask = self.enc_p(x, x_lengths)
     if self.n_speakers > 0:
